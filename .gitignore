@@ -1,0 +1,15 @@
+# Environment and local tooling
+.env
+.env.*
+!.env.example
+.venv/
+node_modules/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.coverage
+coverage/
+dist/
+build/
+.DS_Store
+
