@@ -14,7 +14,7 @@
 ## Index
 
 - [Product vision](product/vision.md) and [PRD](product/PRD.md)
-- [Architecture](architecture/architecture.md), [domain model](architecture/domain-model.md), [module design](architecture/module-design.md), and [interfaces](architecture/interfaces.md)
+- [Architecture](architecture/architecture.md), [domain model](architecture/domain-model.md), [module design](architecture/module-design.md), [public contracts](architecture/public-contracts.md), [domain events](architecture/domain-events.md), [entity relationships](architecture/entity-relationships.md), [API design](architecture/api-design.md), [AI architecture](architecture/ai-architecture.md), [data model](architecture/data-model.md), [security model](architecture/security-model.md), [sequence diagrams](architecture/sequence-diagrams.md), [state diagrams](architecture/state-diagrams.md), [implementation readiness review](architecture/implementation-readiness-review.md), and [interfaces](architecture/interfaces.md)
 - [Architecture decision records](adr/README.md)
 - [API documentation](api/README.md)
 - [Coding standards](engineering/coding-standards.md), [design principles](engineering/design-principles.md), and [testing strategy](engineering/testing-strategy.md)

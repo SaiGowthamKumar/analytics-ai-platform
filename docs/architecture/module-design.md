@@ -1,27 +1,28 @@
 # Module Design
 
-**Purpose:** Set independent module responsibilities and public contracts.
+**Purpose:** Define business module responsibilities, public boundaries, events, and allowed dependencies.
 
 **Owner:** Principal Architect
 
-| Module | Responsibilities | Depends on | Public interface / expansion |
-|---|---|---|---|
-| Analytics | interpret, plan, orchestrate analysis | Knowledge, LLM ports, Connectors | `ask`; support workflows later |
-| Knowledge | semantic assets and retrieval | Configuration, repositories | `retrieve_context`, `publish_asset` |
-| Dashboard | visualization specifications | Analytics contracts | `create_visualization`; add BI publishing |
-| Insights | evidence-based interpretation | result contracts, LLM port | `derive_insights` |
-| Recommendations | actionable suggestions | Insights, policy | `recommend` |
-| Connectors | data-source capabilities and execution | Security, configuration | `execute_read_only` |
-| LLM | provider-neutral generation | Configuration | `generate`, `embed`, `evaluate` |
-| Memory | approved contextual recall | security, repositories | `retrieve`, `store` |
-| Configuration | typed settings and feature policy | none | `get_setting` |
-| Security | authn/authz, policy, audit | identity adapter | `authorize`, `audit` |
-| Monitoring | metrics, logs, traces | ports | `record_*` |
-| Testing | test fixtures and contract suites | all public contracts | reusable test support |
+## Module interaction rule
 
-Internal classes remain private to a module. Cross-module access occurs only through the named interfaces or events.
+Each module owns one business capability. It exposes commands, queries, DTOs, ports, and events defined in [public contracts](public-contracts.md). A module may consume another module only through those contracts; it may not read or alter another module's private state.
+
+| Module | Purpose and responsibilities | Public interfaces | Dependencies | Business rules | Published events | Consumed events | Future expansion |
+|---|---|---|---|---|---|---|---|
+| Analytics | Own the end-to-end analysis-request lifecycle: capture question, resolve intent, request planning, coordinate outcome assembly. | AskQuestion, ClarifyQuestion, GetAnalysisRequest, GetAnalysisOutcome | Knowledge, SQL Engine, Connectors, Dashboard, Insights, Recommendations, Security, Memory | No request proceeds when intent is ambiguous or policy denies it; every terminal outcome has provenance. | QuestionAsked, AnalysisPlanned, AnalysisCompleted, AnalysisRefused | SemanticContextRetrieved, SQLValidated, QueryExecuted, VisualizationGenerated, InsightGenerated, RecommendationGenerated, AccessEvaluated | Saved analyses, collaboration, scheduled analysis. |
+| Knowledge | Own governed business meaning: glossary, KPIs, relationships, rules, examples, approval, and semantic retrieval. | RetrieveSemanticContext, GetSemanticAsset, SubmitSemanticAsset, ApproveSemanticAsset | Security, Configuration | Production context contains only approved, applicable versions; conflicts require resolution. | SemanticContextRetrieved, SemanticAssetApproved, SemanticAssetDeprecated | QuestionAsked, SemanticAssetSubmitted | Stewardship queues, impact analysis, richer relationship inference. |
+| SQL Engine | Translate an approved plan into a bounded query specification and validate it against policy and semantic constraints. | GenerateQuerySpecification, ValidateQuerySpecification, GetValidationDecision | Knowledge, Security, LLM Gateway | Only read-only, scoped, bounded specifications may be validated; no execution occurs here. | SQLGenerated, SQLValidated, SQLRejected | AnalysisPlanned, SemanticContextRetrieved, ActionValidated | Cost estimation, dialect capabilities, optimization advice. |
+| Dashboard | Own visualization specifications and reusable dashboard composition. | GenerateVisualization, CreateDashboard, GetDashboard | Analytics result contracts, Knowledge, Security | A visualization must name its metric, dimension, result reference, and provenance; dashboards never redefine KPIs. | VisualizationGenerated, DashboardCreated | QueryExecuted, SemanticContextRetrieved | Drill-down, sharing, accessibility preferences. |
+| Insights | Turn authorized results into evidence-backed business observations. | GenerateInsights, GetInsights | Analytics result contracts, Knowledge, LLM Gateway, Security | Insights separate observed facts from hypotheses; unsupported causal claims are rejected. | InsightGenerated, InsightWithheld | QueryExecuted, SemanticContextRetrieved | Anomaly detection, comparative narratives, user feedback. |
+| Recommendations | Turn eligible insights into proposed actions with rationale and review status. | GenerateRecommendations, ReviewRecommendation, GetRecommendations | Insights, Knowledge, Security | No recommendation without evidence, confidence, and a non-autonomous action boundary. | RecommendationGenerated, RecommendationReviewed, RecommendationWithheld | InsightGenerated, ActionValidated | Prioritization, experimentation links, approval workflows. |
+| Connectors | Own source capability, authorized query execution, and result provenance. | GetConnectorCapabilities, ExecuteValidatedQuery, GetResultReference | Security, Configuration | Execute only a validated, authorized, in-scope query; never interpret business meaning. | QueryExecuted, QueryExecutionFailed | SQLValidated, ActionValidated | Additional source types, freshness metadata, cost controls. |
+| LLM Gateway | Offer interchangeable language and reasoning capabilities behind business-neutral contracts. | RequestGeneration, RequestEmbedding, GetCapabilityProfile | Configuration, Monitoring | Does not decide business truth, authorization, semantic approval, or query validity. | GenerationCompleted, GenerationFailed | None; invoked through RequestGeneration | Capability routing, evaluation policy, fallback selection. |
+| Memory | Own authorized conversational continuity and contextual recall. | StoreConversationContext, RetrieveConversationContext, ForgetConversationContext | Security, Configuration | Context is scoped by actor, tenant, consent, retention, and purpose; it is never authoritative business knowledge. | ConversationContextStored, ConversationContextExpired | QuestionAsked, AnalysisCompleted | Team memory, summarization, retention automation. |
+| Security | Own authorization, policy decisions, audit policy, and business access boundaries. | EvaluateAccess, ValidateAction, RecordAudit, GetAuditTrail | Configuration | Deny by default; decisions are explainable, scoped, and auditable; no module bypasses a decision. | AccessEvaluated, ActionValidated, AuditRecorded, AccessDenied | QuestionAsked, SQLGenerated, QueryExecuted, RecommendationGenerated | Delegation, obligations, compliance attestations. |
+| Monitoring | Own operational signals relevant to service health and quality. | RecordOperationalSignal, GetOperationalStatus | Configuration | Operational telemetry must not become a substitute for governed business audit history. | OperationalSignalRecorded, QualityThresholdBreached | All events as permitted by policy | Quality scorecards, alert routing, capacity signals. |
+| Configuration | Own versioned, approved business-neutral configuration and feature policy. | GetConfiguration, GetPolicyValue, PublishConfiguration | Security | Changes are validated, versioned, auditable, and cannot override domain invariants. | ConfigurationPublished, ConfigurationRejected | None | Tenant configuration, rollout controls, policy simulation. |
 
 ## Future expansion
 
-Define per-module API schemas and ownership teams as modules become implemented.
-
+Add module-level contract versioning and ownership contacts when implementation teams are established.
