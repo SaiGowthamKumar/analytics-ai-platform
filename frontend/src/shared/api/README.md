@@ -7,4 +7,3 @@
 **Expected contents:** Approved presentation foundation artifacts.
 
 **Do not place:** Business behavior, feature logic, or endpoint implementations.
-

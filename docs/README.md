@@ -22,6 +22,7 @@
 - [Deployment](operations/deployment.md), [development setup](operations/development-setup.md), [security](operations/security.md), [performance](operations/performance.md), [scalability](operations/scalability.md), and [maintainability](operations/maintainability.md)
 - [Roadmap](roadmap/roadmap.md), [glossary](reference/glossary.md), [research](research/README.md), and [meeting notes](meetings/README.md)
 - [Codex rules](governance/codex-rules.md)
+- [CI/CD quality gates](development/ci-cd.md)
 
 ## Future expansion
 

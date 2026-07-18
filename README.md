@@ -1,5 +1,7 @@
 # AI Analytics Platform
 
+[![Continuous Integration](https://github.com/<OWNER>/<REPOSITORY>/actions/workflows/ci.yml/badge.svg)](https://github.com/<OWNER>/<REPOSITORY>/actions/workflows/ci.yml)
+
 > **An enterprise-ready, provider-agnostic AI Analytics Platform that transforms natural-language business questions into trusted dashboards, insights, and recommendations using enterprise data, semantic knowledge, and intelligent orchestration.**
 
 ---
