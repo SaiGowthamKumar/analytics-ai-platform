@@ -1,0 +1,51 @@
+@import "./tokens.css";
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  margin: 0;
+}
+
+.application-shell {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+}
+
+.application-header,
+.application-footer {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  border-style: solid;
+  padding: var(--space-3) var(--space-4);
+}
+
+.application-header {
+  border-width: 0 0 1px;
+}
+
+.application-footer {
+  border-width: 1px 0 0;
+  color: var(--color-text-muted);
+}
+
+.application-body {
+  display: grid;
+  grid-template-columns: 14rem 1fr;
+}
+
+.application-sidebar {
+  border-right: 1px solid var(--color-border);
+}
+
+.application-main,
+.error-fallback {
+  padding: var(--space-5);
+}
+
