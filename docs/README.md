@@ -19,7 +19,7 @@
 - [API documentation](api/README.md)
 - [Coding standards](engineering/coding-standards.md), [design principles](engineering/design-principles.md), and [testing strategy](engineering/testing-strategy.md)
 - [Semantic knowledge layer](knowledge/semantic-knowledge-layer.md) and [prompt library](prompts/README.md)
-- [Deployment](operations/deployment.md), [security](operations/security.md), [performance](operations/performance.md), [scalability](operations/scalability.md), and [maintainability](operations/maintainability.md)
+- [Deployment](operations/deployment.md), [development setup](operations/development-setup.md), [security](operations/security.md), [performance](operations/performance.md), [scalability](operations/scalability.md), and [maintainability](operations/maintainability.md)
 - [Roadmap](roadmap/roadmap.md), [glossary](reference/glossary.md), [research](research/README.md), and [meeting notes](meetings/README.md)
 - [Codex rules](governance/codex-rules.md)
 
