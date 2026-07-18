@@ -50,4 +50,3 @@ export class ApiClientError extends Error {
     this.name = "ApiClientError";
   }
 }
-

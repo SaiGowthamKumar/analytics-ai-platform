@@ -1,4 +1,4 @@
-import { Component, type ErrorInfo, type ReactNode } from "react";
+import { Component, type ReactNode } from "react";
 
 type ErrorBoundaryProperties = Readonly<{ children: ReactNode }>;
 type ErrorBoundaryState = Readonly<{ has_error: boolean }>;
@@ -10,9 +10,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProperties, ErrorBound
     return { has_error: true };
   }
 
-  public componentDidCatch(_error: Error, _errorInfo: ErrorInfo): void {
-    // Telemetry is intentionally outside the bootstrap scope.
-  }
+  public componentDidCatch(): void {}
 
   public render(): ReactNode {
     if (this.state.has_error) {
@@ -27,4 +25,3 @@ export class ErrorBoundary extends Component<ErrorBoundaryProperties, ErrorBound
     return this.props.children;
   }
 }
-

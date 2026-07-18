@@ -1,8 +1,9 @@
 """Health endpoint tests for the technical backend foundation."""
 
 import pytest
-from backend.composition.bootstrap import app
 from fastapi.testclient import TestClient
+
+from backend.composition.bootstrap import app
 
 
 @pytest.mark.parametrize("path", ["/health", "/ready", "/live"])

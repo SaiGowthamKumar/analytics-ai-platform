@@ -15,4 +15,3 @@ export function AppProviders({ children }: AppProvidersProperties): React.JSX.El
     </ErrorBoundary>
   );
 }
-
