@@ -1,0 +1,1 @@
+"""Technical bootstrap test configuration."""
