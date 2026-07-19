@@ -1,14 +1,21 @@
-"""Explicit dependency wiring for technical bootstrap concerns."""
+"""Explicit technical composition without hidden instantiation."""
 
-from dataclasses import dataclass
-from logging import Logger
+import logging
 
 from backend.composition.settings import Settings
+from backend.infrastructure.database.connection import Database
 
 
-@dataclass(frozen=True, slots=True)
 class ApplicationContainer:
-    """Technical dependencies injected into delivery components."""
+    """Hold explicit infrastructure dependencies in a transparent composition root."""
 
-    settings: Settings
-    logger: Logger
+    def __init__(
+        self,
+        settings: Settings,
+        logger: logging.Logger,
+        database: Database,
+    ) -> None:
+        """Accept fully-initialized infrastructure components."""
+        self.settings = settings
+        self.logger = logger
+        self.database = database

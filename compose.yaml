@@ -9,6 +9,7 @@ services:
       APP_ENVIRONMENT: development
       APP_DOCS_ENABLED: "true"
       APP_LOG_LEVEL: INFO
+      APP_DATABASE_URL: postgresql+asyncpg://analytics_platform:local-development-only@postgres:5432/analytics_platform
     ports:
       - "8000:8000"
     volumes:

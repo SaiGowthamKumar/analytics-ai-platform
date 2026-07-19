@@ -1,5 +1,6 @@
 """Technical HTTP delivery configuration for bootstrap endpoints only."""
 
+import asyncio
 import re
 from typing import Any, cast
 from uuid import uuid4
@@ -84,10 +85,7 @@ api_router = APIRouter()
 root_router = APIRouter()
 
 
-@health_router.get("/health", response_model=HealthResponse, status_code=status.HTTP_200_OK)
-@health_router.get("/ready", response_model=HealthResponse, status_code=status.HTTP_200_OK)
-@health_router.get("/live", response_model=HealthResponse, status_code=status.HTTP_200_OK)
-def get_process_health(request: Request) -> HealthResponse:
+def _health_response(request: Request) -> HealthResponse:
     """Return process health without invoking external dependencies."""
     settings = _container(request).settings
     return HealthResponse(
@@ -96,6 +94,52 @@ def get_process_health(request: Request) -> HealthResponse:
         version=settings.service_version,
         correlation_id=request.state.correlation_id,
     )
+
+
+@health_router.get("/health", response_model=HealthResponse, status_code=status.HTTP_200_OK)
+def get_process_health(request: Request) -> HealthResponse:
+    """Report process health without invoking external dependencies."""
+    return _health_response(request)
+
+
+@health_router.get("/live", response_model=HealthResponse, status_code=status.HTTP_200_OK)
+def get_liveness(request: Request) -> HealthResponse:
+    """Report that the process can serve HTTP requests."""
+    return _health_response(request)
+
+
+@health_router.get("/ready", response_model=HealthResponse, status_code=status.HTTP_200_OK)
+async def get_readiness(request: Request) -> HealthResponse | JSONResponse:
+    """Report readiness only when the configured database is reachable."""
+    # Add timeout to database health check
+    try:
+        healthy = await asyncio.wait_for(
+            _container(request).database.is_healthy(), 
+            timeout=5.0
+        )
+        if not healthy:
+            return _error_response(
+                request,
+                status.HTTP_503_SERVICE_UNAVAILABLE,
+                "DATABASE_UNAVAILABLE",
+                "Database connectivity is unavailable.",
+            )
+    except TimeoutError:
+        return _error_response(
+            request,
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            "DATABASE_TIMEOUT",
+            "Database connectivity timed out.",
+        )
+    except Exception as e:
+        return _error_response(
+            request,
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            "DATABASE_ERROR",
+            f"Database connectivity check failed: {e!s}",
+        )
+        
+    return _health_response(request)
 
 
 root_router.include_router(health_router)
